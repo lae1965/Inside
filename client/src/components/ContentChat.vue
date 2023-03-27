@@ -46,13 +46,13 @@ onMounted(async () => {
     handleToList();
   });
   try {
-    socketStore.initSocket();
     await messagesStore.fetchGetMessages();
+    socketStore.initSocket();
     socketStore.subscribeToChatEvent(data => {
       messagesStore.createMessage(data);
     });
     socketStore.subscribeToError((error) => {
-      console.log(error);
+      router.push({ name: 'login' });
     })
   } catch {
     handleToList();

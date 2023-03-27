@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import type { AxiosError } from 'axios';
 
 import { useTopicsStore } from '@/stores/topicsStore';
 import { useUserStore } from '@/stores/userStore';
@@ -13,8 +14,9 @@ const topicStore = useTopicsStore();
 const handleSubmit = async () => {
   try {
     await topicStore.fetchCreateTopic(newTopic.value);
-  } catch {
-    alert('Ошибка добавления')
+  } catch (e) {
+    if ((e as AxiosError).response?.status) router.push({ name: 'login' });
+    else alert('Ошибка добавления');
   }
   newTopic.value = '';
 }
