@@ -30,8 +30,9 @@ onMounted(async () => {
   try {
     await userStore.isAuthFetch();
     await topicStore.fetchGetTopics();
-  } catch {
-    alert('Ошибка загрузки');
+  } catch (e) {
+    if ((e as AxiosError).response?.status === 401) router.push({ name: 'login' });
+    else alert('Ошибка загрузки');
   }
 });
 </script>
