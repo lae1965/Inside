@@ -3,7 +3,6 @@ import { reactive, ref } from 'vue'
 
 import { useUserStore } from './userStore'
 import { $apiAuth } from '@/api'
-import { SERVER_URL } from '@/util/constants'
 
 interface Topic {
   id: number
@@ -24,7 +23,7 @@ export const useTopicsStore = defineStore('topics', () => {
 
   const fetchCreateTopic = async (newTopic: string) => {
     try {
-      const retcode = await $apiAuth.post(`${SERVER_URL}/topic`, {
+      const retcode = await $apiAuth.post(`${import.meta.env.VITE_SERVER_URL}/topic`, {
         authorId: userStore.id,
         topic: newTopic
       })
@@ -41,7 +40,7 @@ export const useTopicsStore = defineStore('topics', () => {
 
   const fetchGetTopics = async () => {
     try {
-      const retcode = await $apiAuth.get(`${SERVER_URL}/topic`)
+      const retcode = await $apiAuth.get(`${import.meta.env.VITE_SERVER_URL}/topic`)
       if (!retcode) throw new Error('Ошибка получения списка тем')
       if (retcode.status !== 200)
         throw new Error(`Ошибка получения списка тем: статус ответа ${retcode.status}`)

@@ -3,7 +3,6 @@ import { reactive } from 'vue'
 
 import { useTopicsStore } from './topicsStore'
 import { $apiAuth } from '@/api'
-import { SERVER_URL } from '@/util/constants'
 import type { Message } from '@/interfaces/messageInterface'
 
 export const useMessagesStore = defineStore('message', () => {
@@ -17,7 +16,9 @@ export const useMessagesStore = defineStore('message', () => {
   const fetchGetMessages = async () => {
     try {
       if (topicStore.curTopicId === -1) throw new Error('Ошибка получения списка сообщений')
-      const retcode = await $apiAuth.get(`${SERVER_URL}/chat/${topicStore.curTopicId}`)
+      const retcode = await $apiAuth.get(
+        `${import.meta.env.VITE_SERVER_URL}/chat/${topicStore.curTopicId}`
+      )
       if (!retcode) throw new Error('Ошибка получения списка сообщений')
       if (retcode.status !== 200)
         throw new Error(`Ошибка получения списка сообщений: статус ответа ${retcode.status}`)

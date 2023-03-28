@@ -51,7 +51,7 @@ onMounted(async () => {
     socketStore.subscribeToChatEvent(data => {
       messagesStore.createMessage(data);
     });
-    socketStore.subscribeToError((error) => {
+    socketStore.subscribeToError(() => {
       router.push({ name: 'login' });
     })
   } catch {

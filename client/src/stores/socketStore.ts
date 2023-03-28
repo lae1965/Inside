@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { io, Socket } from 'socket.io-client'
 
-import { SOCKET_URL } from '@/util/constants'
-
 interface SocketState {
   socket: Socket | null
 }
@@ -18,7 +16,7 @@ export const useSocketStore = defineStore('socket', () => {
   const socketState = reactive<SocketState>({ socket: null })
 
   const initSocket = () => {
-    socketState.socket = io(SOCKET_URL, {
+    socketState.socket = io(import.meta.env.VITE_SOCKET_URL, {
       auth: {
         token: `Bearer ${window.localStorage.getItem('token')}`
       },
