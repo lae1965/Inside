@@ -36,10 +36,10 @@ $ npm install
 $ npx prisma migrate dev --name init
 ```
 
-4. Перейти в каталог "client"
+4. Открыть еще один терминал. Перейти в каталог "client"
 
 ```bash
-$ cd ../client
+$ cd ./client
 ```
 
 5. Выполнить установку зависимостей командой:
