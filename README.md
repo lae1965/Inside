@@ -21,31 +21,31 @@ Fullstack приложение, сделанное в ходе выполнен�
 1. После скачивания файсов с репозитория, перейти в каталог "server":
 
 ```bash
-$ cd ./server
+cd ./server
 ```
 
 2. Выполнить установку зависимостей командой:
 
 ```bash
-$ npm install
+npm install
 ```
 
 3. Выполнить миграцию схем prisma в файл dev.db SQLite
 
 ```bash
-$ npx prisma migrate dev --name init
+npx prisma migrate dev --name init
 ```
 
 4. Открыть еще один терминал. Перейти в каталог "client"
 
 ```bash
-$ cd ./client
+cd ./client
 ```
 
 5. Выполнить установку зависимостей командой:
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Running the app
@@ -54,17 +54,17 @@ $ npm install
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 ```
 
 2. В каталоге "client" запустить команду:
 
 ```bash
 # development
-$ npm run dev
+npm run dev
 ```
 
 3. В браузере в поисковой строке ввести: http://localhost:5173
