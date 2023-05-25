@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { TopicsModule } from './topics/topics.module';
 import { MessagesModule } from './messages/messages.module';
 import { SocketModule } from './socket/socket.module';
+import { ReactionModule } from './reaction/reaction.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SocketModule } from './socket/socket.module';
     }),
     ConfigModule.forRoot(),
     SocketModule,
+    ReactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

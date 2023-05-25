@@ -1,14 +1,4 @@
-import {
-  createRouter,
-  createWebHistory,
-  type NavigationGuardNext,
-  type RouteLocationNormalized
-} from 'vue-router'
-
-import ChatsList from '@/components/ChatsList.vue'
-import ContentChat from '@/components/ContentChat.vue'
-import UserAuth from '@/components/UserAuth.vue'
-import UserLogin from '@/components/UserLogin.vue'
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'chats-list',
-      component: ChatsList,
+      component: () => import('@/components/ChatsList.vue'),
       meta: {
         requiresAuth: true
       }
@@ -24,7 +14,7 @@ const router = createRouter({
     {
       path: '/chat',
       name: 'chat',
-      component: ContentChat,
+      component: () => import('@/components/ContentChat.vue'),
       meta: {
         requiresAuth: true
       }
@@ -32,24 +22,18 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: UserLogin
+      component: () => import('@/components/UserLogin.vue')
     },
     {
       path: '/auth',
       name: 'auth',
-      component: UserAuth
+      component: () => import('@/components/UserAuth.vue')
     }
   ]
 })
 
-const isAuth = (): boolean => !!window.localStorage.getItem('token')
-router.beforeEach(
-  (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-    if (to.matched.some((route) => route.meta?.requiresAuth)) {
-      if (isAuth()) next()
-      else next('/login')
-    } else next()
-  }
-)
+router.beforeEach((to: RouteLocationNormalized) => {
+  if (to.meta?.requiresAuth && !window.localStorage.getItem('token')) return { name: 'login' }
+})
 
 export default router

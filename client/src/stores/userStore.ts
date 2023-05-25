@@ -7,7 +7,8 @@ import { $api, $apiAuth } from '@/api'
 export const useUserStore = defineStore('user', () => {
   const login = ref('')
   const id = ref(-1)
-  function setLogin(newLogin: string) {
+
+  const setLogin = (newLogin: string) => {
     login.value = newLogin
   }
 

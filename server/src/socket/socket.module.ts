@@ -4,7 +4,9 @@ import { io } from 'socket.io-client';
 import { AuthGuardWS } from 'src/guards/authWS.guard';
 import { MyGateway } from './socket.gateway';
 import { MessagesModule } from '../messages/messages.module';
-import { MessagesService } from './../messages/messages.service';
+import { MessagesService } from '../messages/messages.service';
+import { ReactionModule } from '../reaction/reaction.module';
+import { ReactionService } from '../reaction/reaction.service';
 
 export const socketProvider = {
   provide: 'SOCKET_IO',
@@ -12,8 +14,14 @@ export const socketProvider = {
 };
 
 @Module({
-  imports: [MessagesModule],
-  providers: [MyGateway, AuthGuardWS, MessagesService, socketProvider],
+  imports: [MessagesModule, ReactionModule],
+  providers: [
+    MyGateway,
+    AuthGuardWS,
+    MessagesService,
+    ReactionService,
+    socketProvider,
+  ],
   exports: [socketProvider],
 })
 export class SocketModule {}

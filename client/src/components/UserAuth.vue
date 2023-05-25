@@ -25,10 +25,6 @@ const handleSubmit = async () => {
     alert('Ошибка регистрации');
   }
 }
-
-const handleToLogin = () => {
-  router.push({ name: 'login' });
-}
 </script>
 
 <template>
@@ -38,7 +34,9 @@ const handleToLogin = () => {
     <input type="password" name="check-password" placeholder="Повторите пароль" v-model="checkPassword">
     <button type="submit"
       :disabled="!user.login.length || !password.length || !checkPassword.length || password !== checkPassword">Зарегистрироваться</button>
-    <button type="button" @click="handleToLogin">Уже есть аккаунт? Залогиниться</button>
+    <RouterLink to="/login">
+      <button type="button">Уже есть аккаунт? Залогиниться</button>
+    </RouterLink>
   </form>
 </template>
 

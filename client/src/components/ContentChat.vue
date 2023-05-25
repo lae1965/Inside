@@ -5,9 +5,15 @@ import { useRouter } from 'vue-router';
 import { useMessagesStore } from '@/stores/messagesStore';
 import { useTopicsStore } from '@/stores/topicsStore';
 import { useUserStore } from '@/stores/userStore';
+import { useReactionsStore } from '@/stores/reactionsStore';
 import { useSocketStore } from '@/stores/socketStore';
 import { IdleTimer } from '@/util/idleTimer';
+import { iconList } from '@/util/reactions';
+import ReactionSelectList from './ReactionSelectList.vue';
+import ReactionList from './ReactionList.vue';
+import type { Message } from '@/interfaces/messageInterface';
 
+const isReactionClick = ref(false);
 const router = useRouter();
 const newMessage = ref('');
 let idleTimer: IdleTimer | null = null;
@@ -15,6 +21,7 @@ const first = ref(true);
 const userStore = useUserStore();
 const topicsStore = useTopicsStore();
 const messagesStore = useMessagesStore();
+const reactionsStore = useReactionsStore();
 const socketStore = useSocketStore();
 
 const handleSubmit = async () => {
@@ -28,6 +35,7 @@ const handleSubmit = async () => {
       id: Date.now(),
       message: newMessage.value,
       author: userStore.login,
+      reactions: [],
     });
   } catch (e) {
     alert('Ошибка сохранения');
@@ -37,25 +45,37 @@ const handleSubmit = async () => {
   newMessage.value = '';
 }
 
-const handleToList = () => {
+const toList = () => {
   router.push({ name: 'chats-list' });
 }
 
 onMounted(async () => {
   idleTimer = new IdleTimer(3 * 60 * 1000, () => { // 3 минуты в мс
-    handleToList();
+    toList();
   });
   try {
     await messagesStore.fetchGetMessages();
     socketStore.initSocket();
-    socketStore.subscribeToChatEvent(data => {
+    socketStore.subscribeToEvent('chat', (data) => {
       messagesStore.createMessage(data);
+    });
+    socketStore.subscribeToEvent('reaction-create', (data) => {
+      const message = messagesStore.messageList.find(msg => msg.id === data.messageId);
+      if (message) reactionsStore.createReaction(message, data);
+    });
+    socketStore.subscribeToEvent('reaction-update', (data) => {
+      const message = messagesStore.messageList.find(msg => msg.id === data.messageId);
+      if (message) reactionsStore.updateReaction(message, data);
+    });
+    socketStore.subscribeToEvent('reaction-remove', (data) => {
+      const message = messagesStore.messageList.find(msg => msg.id === data.messageId);
+      if (message) reactionsStore.removeReaction(message, data);
     });
     socketStore.subscribeToError(() => {
       router.push({ name: 'login' });
-    })
+    });
   } catch {
-    handleToList();
+    toList();
   }
 });
 
@@ -66,13 +86,54 @@ onUnmounted(() => {
   }
   socketStore.disconnectSocket();
 });
+
+const handleSetReactionClick = (toggle: boolean) => {
+  isReactionClick.value = toggle;
+}
+
+const handleReactionSelect = (reactionNum: number, message: Message) => {
+  handleSetReactionClick(false);
+  const reactionData = {
+    reaction: iconList[reactionNum],
+    author: userStore.login,
+    authorId: userStore.id,
+  }
+
+  const emitData: {
+    authorId: number,
+    messageId: number,
+    reaction?: string,
+  } = {
+    authorId: userStore.id,
+    messageId: message.id,
+    reaction: iconList[reactionNum],
+  }
+
+  for (let i = 0; i < message.reactions!.length; i++) {
+    if (message.reactions![i].authorId === userStore.id) {
+      if (message.reactions![i].reaction === iconList[reactionNum]) {
+        delete emitData.reaction;
+        socketStore.emitSocketRemoveReactionEvent(emitData);
+        reactionsStore.removeReaction(message, reactionData);
+      } else {
+        socketStore.emitSocketUpdateReactionEvent(emitData);
+        reactionsStore.updateReaction(message, reactionData);
+      }
+      return;
+    }
+  }
+  socketStore.emitSocketCreateReactionEvent(emitData);
+  reactionsStore.createReaction(message, reactionData);
+}
 </script>
 
 <template>
   <header>
     <h2 class="header header__name">{{ topicsStore.curTopic }}</h2>
   </header>
-  <button class="to-list" @click="handleToList">Список тем</button>
+  <RouterLink to="/">
+    <button class="to-list">Список тем</button>
+  </RouterLink>
   <form class="new-themes" @submit.prevent="handleSubmit">
     <input type="text" name="new-message" class="new-themes__input" placeholder="Новое сообщение" v-model="newMessage">
     <button type="submit" class="new-themes__submit" :disabled="!newMessage.length">Отправить</button>
@@ -90,8 +151,20 @@ onUnmounted(() => {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="message in messagesStore.messageList" :key="message.id">
-        <td>{{ message.message }}</td>
+      <tr v-for="message in messagesStore.messageList" :key="message.id" class="table-item">
+        <td>
+          <div class="message">
+            <span>{{ message.message }}</span>
+            <span class="reaction" @click="handleSetReactionClick(true)">
+              <img src="../asserts/reactions/1234.png" alt="heart" class="white-heart" v-if="!isReactionClick">
+              <ReactionSelectList @icon-selected="(i) => { handleReactionSelect(i, message) }"
+                @icon-escape="handleSetReactionClick(false)" v-else />
+            </span>
+          </div>
+          <div v-if="message.reactions.length" class="reaction-content">
+            <ReactionList :message="message" />
+          </div>
+        </td>
         <td class="themes__author">{{ message.author }}</td>
       </tr>
     </tbody>
@@ -135,8 +208,7 @@ onUnmounted(() => {
   width: 15% !important;
 }
 
-
-.themes tr:hover {
+.themes tbody tr:hover {
   color: initial;
   background-color: initial;
 }
@@ -177,5 +249,39 @@ onUnmounted(() => {
 
 .ok {
   padding: 6px;
+}
+
+.message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 20px;
+}
+
+.reaction {
+  position: relative;
+  width: 30px;
+  height: 20px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.reaction-content {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.white-heart {
+  height: 15px;
+  width: 15px;
+  opacity: 0.3;
+}
+
+.table-item:hover .reaction {
+  display: flex;
 }
 </style>

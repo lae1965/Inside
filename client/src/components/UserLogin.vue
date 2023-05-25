@@ -23,9 +23,6 @@ const handleSubmit = async () => {
     alert('Ошибка регистрации');
   }
 }
-const handleToAuth = () => {
-  router.push({ name: 'auth' });
-}
 </script>
 
 <template>
@@ -35,9 +32,9 @@ const handleToAuth = () => {
     <button type="submit" :disabled="!user.login.length || !password.length">
       Залогиниться
     </button>
-    <button type="button" @click="handleToAuth">
-      Нет аккаунта? Зарегистрироваться
-    </button>
+    <RouterLink to="/auth">
+      <button type="button">Нет аккаунта? Зарегистрироваться</button>
+    </RouterLink>
   </form>
 </template>
 

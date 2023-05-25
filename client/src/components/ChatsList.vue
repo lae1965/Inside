@@ -131,6 +131,7 @@ onMounted(async () => {
 
 .themes__author {
   width: 15%;
+  vertical-align: top;
 }
 
 .no-content {

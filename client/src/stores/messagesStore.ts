@@ -22,7 +22,7 @@ export const useMessagesStore = defineStore('message', () => {
       if (!retcode) throw new Error('Ошибка получения списка сообщений')
       if (retcode.status !== 200)
         throw new Error(`Ошибка получения списка сообщений: статус ответа ${retcode.status}`)
-      messageList.splice(0, messageList.length)
+      messageList.splice(0, messageList.length) // Обнуляем содержимое массива
       retcode.data.result.forEach((item: Message) => {
         messageList.unshift(item)
       })

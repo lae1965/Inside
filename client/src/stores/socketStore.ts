@@ -12,6 +12,12 @@ interface Message {
   message: string
 }
 
+interface Reaction {
+  authorId: number
+  messageId: number
+  reaction?: string
+}
+
 export const useSocketStore = defineStore('socket', () => {
   const socketState = reactive<SocketState>({ socket: null })
 
@@ -33,14 +39,24 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   const emitSocketEvent = (data: Message) => {
-    if (socketState.socket) {
-      socketState.socket.emit('chat', data)
-    }
+    socketState.socket?.emit('chat', data)
   }
 
-  const subscribeToChatEvent = (callback: (data: any) => void) => {
+  const emitSocketCreateReactionEvent = (data: Reaction) => {
+    socketState.socket?.emit('reaction-create', data)
+  }
+
+  const emitSocketUpdateReactionEvent = (data: Reaction) => {
+    socketState.socket?.emit('reaction-update', data)
+  }
+
+  const emitSocketRemoveReactionEvent = (data: { authorId: number; messageId: number }) => {
+    socketState.socket?.emit('reaction-remove', data)
+  }
+
+  const subscribeToEvent = (event: string, callback: (data: any) => void) => {
     if (socketState.socket) {
-      socketState.socket.on('chat', callback)
+      socketState.socket.on(event, callback)
     }
   }
 
@@ -53,7 +69,10 @@ export const useSocketStore = defineStore('socket', () => {
     initSocket,
     disconnectSocket,
     emitSocketEvent,
-    subscribeToChatEvent,
+    emitSocketCreateReactionEvent,
+    emitSocketUpdateReactionEvent,
+    emitSocketRemoveReactionEvent,
+    subscribeToEvent,
     subscribeToError
   }
 })
