@@ -48,6 +48,7 @@ export class ReactionService {
         reaction: response.reaction,
         messageId: response.messageId,
         author: response.user.login,
+        authorId: response.userId,
       };
     } catch (e) {
       throw e;
