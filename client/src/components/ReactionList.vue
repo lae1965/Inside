@@ -57,15 +57,15 @@ const handleDeleteReaction = (reaction: Reaction) => {
   }
 
   16% {
-    transform: translateY(-75px);
+    transform: translateY(-40px);
   }
 
   49% {
-    transform: translateY(-50px);
+    transform: translateY(-20px);
   }
 
   83% {
-    transform: translateY(-25px);
+    transform: translateY(-10px);
   }
 }
 </style>
