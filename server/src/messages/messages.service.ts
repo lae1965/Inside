@@ -18,6 +18,9 @@ export class MessagesService {
           user: {
             select: {
               login: true,
+              avatar: true,
+              aliasName: true,
+              aliasColor: true,
             },
           },
         },
@@ -26,6 +29,9 @@ export class MessagesService {
         id: response.id,
         message: response.text,
         author: response.user.login,
+        avatar: response.user.avatar,
+        aliasName: response.user.aliasName,
+        aliasColor: response.user.aliasColor,
         reactions: [],
       };
     } catch (e) {
@@ -41,6 +47,9 @@ export class MessagesService {
           user: {
             select: {
               login: true,
+              avatar: true,
+              aliasName: true,
+              aliasColor: true,
             },
           },
           Reaction: {
@@ -50,6 +59,9 @@ export class MessagesService {
                 select: {
                   id: true,
                   login: true,
+                  avatar: true,
+                  aliasName: true,
+                  aliasColor: true,
                 },
               },
             },
@@ -61,10 +73,16 @@ export class MessagesService {
         id: item.id,
         message: item.text,
         author: item.user.login,
+        avatar: item.user.avatar,
+        aliasName: item.user.aliasName,
+        aliasColor: item.user.aliasColor,
         reactions: item.Reaction.map((reaction) => ({
           reaction: reaction.reaction,
           author: reaction.user.login,
           authorId: reaction.user.id,
+          avatar: reaction.user.avatar,
+          aliasName: reaction.user.aliasName,
+          aliasColor: reaction.user.aliasColor,
         })),
       }));
       const topic = (

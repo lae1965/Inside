@@ -8,6 +8,9 @@ interface Topic {
   id: number
   topic: string
   author: string
+  avatar: string
+  aliasName: string
+  aliasColor: string
 }
 
 export const useTopicsStore = defineStore('topics', () => {

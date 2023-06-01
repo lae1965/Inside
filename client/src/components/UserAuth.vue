@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useUserStore } from '@/stores/userStore';
+import AvatarAlias from './AvatarAlias.vue';
 
 const password = ref('');
 const checkPassword = ref('');
@@ -17,6 +18,10 @@ const login = computed({
   },
 });
 
+onMounted(() => {
+  user.createAliasColor();
+});
+
 const handleSubmit = async () => {
   try {
     await user.authFetch(password.value, true);
@@ -25,11 +30,16 @@ const handleSubmit = async () => {
     alert('Ошибка регистрации');
   }
 }
+
+const handleLoginChange = () => {
+  if (user.login) user.createAliasName();
+}
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <input type="text" name="login" placeholder="Логин" v-model="login">
+    <AvatarAlias radius="100" :avatar="user.avatar" :aliasName="user.alias.name" :alias-color="user.alias.color" />
+    <input type="text" name="login" placeholder="Логин" v-model="login" @change="handleLoginChange">
     <input type="password" name="password" placeholder="Пароль" v-model="password">
     <input type="password" name="check-password" placeholder="Повторите пароль" v-model="checkPassword">
     <button type="submit"
@@ -46,13 +56,14 @@ form {
   flex-direction: column;
   gap: 10px;
   width: 30%;
-  margin: 8vw auto 0;
+  margin: 20vh auto 0;
 }
 
 input,
 button {
   padding: 6px;
   outline: none;
+  width: 100%;
 }
 
 button:enabled:hover {

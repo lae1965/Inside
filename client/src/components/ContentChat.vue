@@ -11,6 +11,7 @@ import { IdleTimer } from '@/util/idleTimer';
 import { iconList } from '@/util/reactions';
 import ReactionSelectList from './ReactionSelectList.vue';
 import ReactionList from './ReactionList.vue';
+import AvatarAlias from './AvatarAlias.vue';
 import type { Message } from '@/interfaces/messageInterface';
 
 const isReactionClick = ref(false);
@@ -26,16 +27,10 @@ const socketStore = useSocketStore();
 
 const handleSubmit = async () => {
   try {
-    socketStore.emitSocketEvent({
+    socketStore.emitSocketCreateMessageEvent({
       authorId: userStore.id,
       topicId: topicsStore.curTopicId,
       message: newMessage.value,
-    });
-    messagesStore.createMessage({
-      id: Date.now(),
-      message: newMessage.value,
-      author: userStore.login,
-      reactions: [],
     });
   } catch (e) {
     alert('Ошибка сохранения');
@@ -97,6 +92,9 @@ const handleReactionSelect = (reactionNum: number, message: Message) => {
     reaction: iconList[reactionNum],
     author: userStore.login,
     authorId: userStore.id,
+    avatar: userStore.avatar,
+    aliasName: userStore.alias.name,
+    aliasColor: userStore.alias.color
   }
 
   const emitData: {
@@ -132,7 +130,7 @@ const handleReactionSelect = (reactionNum: number, message: Message) => {
     <h2 class="header header__name">{{ topicsStore.curTopic }}</h2>
   </header>
   <RouterLink to="/">
-    <button class="to-list">Список тем</button>
+    <button class="to-list">К списку тем</button>
   </RouterLink>
   <form class="new-themes" @submit.prevent="handleSubmit">
     <input type="text" name="new-message" class="new-themes__input" placeholder="Новое сообщение" v-model="newMessage">
@@ -152,7 +150,7 @@ const handleReactionSelect = (reactionNum: number, message: Message) => {
     </thead>
     <tbody>
       <tr v-for="message in messagesStore.messageList" :key="message.id" class="table-item">
-        <td>
+        <td class="table-message">
           <div class="message">
             <span>{{ message.message }}</span>
             <span class="reaction" @click="handleSetReactionClick(true)">
@@ -165,7 +163,13 @@ const handleReactionSelect = (reactionNum: number, message: Message) => {
             <ReactionList :message="message" />
           </div>
         </td>
-        <td class="themes__author">{{ message.author }}</td>
+        <td class="vertical-align">
+          <div class="themes__author">
+            <AvatarAlias radius="15" :avatar="message.avatar" :alias-name="message.aliasName"
+              :alias-color="message.aliasColor" />
+            <span>{{ message.author }}</span>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -251,27 +255,30 @@ const handleReactionSelect = (reactionNum: number, message: Message) => {
   padding: 6px;
 }
 
+.table-message {
+  width: 85%;
+}
+
 .message {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 0;
   padding-bottom: 0;
-  min-height: 20px;
 }
 
 .reaction {
   position: relative;
   width: 30px;
-  height: 20px;
   display: none;
   justify-content: center;
   align-items: center;
 }
 
 .reaction-content {
+  margin-top: 5px;
   display: flex;
-  gap: 10px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
@@ -283,5 +290,9 @@ const handleReactionSelect = (reactionNum: number, message: Message) => {
 
 .table-item:hover .reaction {
   display: flex;
+}
+
+.vertical-align {
+  vertical-align: top;
 }
 </style>

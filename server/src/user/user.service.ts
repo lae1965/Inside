@@ -17,7 +17,13 @@ export class UserService {
     };
   }
 
-  private generateToken(payload: { id: number; login: string }) {
+  private generateToken(payload: {
+    id: number;
+    login: string;
+    avatar?: string;
+    aliasName?: string;
+    aliasColor?: string;
+  }) {
     return jwt.sign(payload, process.env.KEY, { expiresIn: '24h' });
   }
 
@@ -33,13 +39,19 @@ export class UserService {
       const hashPassword = await bcrypt.hash(password, 5);
       const id = (
         await this.prisma.user.create({
-          data: { login, password: hashPassword },
+          data: { ...createUserDto, password: hashPassword, login },
           select: { id: true },
         })
       ).id;
       return {
         id,
-        token: this.generateToken({ id, login }),
+        token: this.generateToken({
+          id,
+          login,
+          avatar: createUserDto.avatar,
+          aliasColor: createUserDto.aliasColor,
+          aliasName: createUserDto.aliasName,
+        }),
       };
     } catch (e) {
       throw e;
@@ -61,7 +73,15 @@ export class UserService {
       }
       return {
         id: user.id,
-        token: this.generateToken({ id: user.id, login }),
+        aliasName: user.aliasName,
+        aliasColor: user.aliasColor,
+        token: this.generateToken({
+          id: user.id,
+          login,
+          avatar: user.avatar,
+          aliasColor: user.aliasColor,
+          aliasName: user.aliasName,
+        }),
       };
     } catch (e) {
       throw e;

@@ -16,6 +16,9 @@ export class TopicsService {
           user: {
             select: {
               login: true,
+              avatar: true,
+              aliasName: true,
+              aliasColor: true,
             },
           },
         },
@@ -24,6 +27,9 @@ export class TopicsService {
         id: response.id,
         topic: response.text,
         author: response.user.login,
+        avatar: response.user.avatar,
+        aliasName: response.user.aliasName,
+        aliasColor: response.user.aliasColor,
       };
     } catch (e) {
       throw e;
@@ -37,6 +43,9 @@ export class TopicsService {
           user: {
             select: {
               login: true,
+              avatar: true,
+              aliasName: true,
+              aliasColor: true,
             },
           },
         },
@@ -45,6 +54,9 @@ export class TopicsService {
         id: item.id,
         topic: item.text,
         author: item.user.login,
+        avatar: item.user.avatar,
+        aliasName: item.user.aliasName,
+        aliasColor: item.user.aliasColor,
       }));
       return {
         result: {

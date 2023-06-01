@@ -18,6 +18,9 @@ interface User extends Request {
   user: {
     id: number;
     login: string;
+    avatar?: string;
+    aliasName?: string;
+    aliasColor?: string;
     iat: number;
     exp: number;
   };
@@ -41,6 +44,12 @@ export class UserController {
   @Get('auth')
   @UseGuards(AuthGuard)
   auth(@Req() req: User) {
-    return { id: req.user.id, login: req.user.login };
+    return {
+      id: req.user.id,
+      login: req.user.login,
+      avatar: req.user.avatar,
+      aliasName: req.user.aliasName,
+      aliasColor: req.user.aliasColor,
+    };
   }
 }

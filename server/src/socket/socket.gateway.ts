@@ -1,14 +1,20 @@
 import { Inject, Injectable, UseGuards } from '@nestjs/common';
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 
 import { AuthGuardWS } from '../guards/authWS.guard';
 import { MessagesService } from '../messages/messages.service';
 import { ReactionService } from '../reaction/reaction.service';
+import { Server } from 'http';
 
 @Injectable()
 @WebSocketGateway()
 export class MyGateway {
+  @WebSocketServer() server: Server;
   constructor(
     @Inject(MessagesService) private readonly messageService: MessagesService,
     @Inject(ReactionService) private readonly reactionService: ReactionService,
@@ -19,7 +25,7 @@ export class MyGateway {
   @SubscribeMessage('chat')
   async handleMessage(client: Socket, payload: any): Promise<void> {
     const data = await this.messageService.create(payload);
-    client.broadcast.emit('chat', data);
+    this.server.emit('chat', data);
   }
 
   @SubscribeMessage('reaction-create')

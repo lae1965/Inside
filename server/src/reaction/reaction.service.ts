@@ -40,6 +40,9 @@ export class ReactionService {
           user: {
             select: {
               login: true,
+              avatar: true,
+              aliasName: true,
+              aliasColor: true,
             },
           },
         },
@@ -49,6 +52,9 @@ export class ReactionService {
         messageId: response.messageId,
         author: response.user.login,
         authorId: response.userId,
+        avatar: response.user.avatar,
+        aliasName: response.user.aliasName,
+        aliasColor: response.user.aliasColor,
       };
     } catch (e) {
       throw e;

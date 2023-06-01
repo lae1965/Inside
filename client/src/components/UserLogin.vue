@@ -44,13 +44,14 @@ form {
   flex-direction: column;
   gap: 10px;
   width: 30%;
-  margin: 8vw auto 0;
+  margin: 30vh auto 0;
 }
 
 input,
 button {
   padding: 6px;
   outline: none;
+  width: 100%;
 }
 
 button:enabled:hover {

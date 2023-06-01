@@ -38,7 +38,7 @@ export const useSocketStore = defineStore('socket', () => {
     }
   }
 
-  const emitSocketEvent = (data: Message) => {
+  const emitSocketCreateMessageEvent = (data: Message) => {
     socketState.socket?.emit('chat', data)
   }
 
@@ -55,20 +55,16 @@ export const useSocketStore = defineStore('socket', () => {
   }
 
   const subscribeToEvent = (event: string, callback: (data: any) => void) => {
-    if (socketState.socket) {
-      socketState.socket.on(event, callback)
-    }
+    socketState.socket?.on(event, callback)
   }
 
   const subscribeToError = (callback: (error: Error) => void) => {
-    if (socketState.socket) {
-      socketState.socket.on('error', callback)
-    }
+    socketState.socket?.on('error', callback)
   }
   return {
     initSocket,
     disconnectSocket,
-    emitSocketEvent,
+    emitSocketCreateMessageEvent,
     emitSocketCreateReactionEvent,
     emitSocketUpdateReactionEvent,
     emitSocketRemoveReactionEvent,

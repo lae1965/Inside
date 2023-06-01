@@ -3,7 +3,7 @@ import type { Reaction } from '@/interfaces/messageInterface';
 import { useReactionsStore } from '@/stores/reactionsStore';
 import { useSocketStore } from '@/stores/socketStore';
 import { useUserStore } from '@/stores/userStore';
-
+import AvatarAlias from './AvatarAlias.vue';
 
 const props = defineProps(['message']);
 
@@ -26,14 +26,15 @@ const handleDeleteReaction = (reaction: Reaction) => {
   <div v-for="(reaction, i) in props.message.reactions" :key="i" class="reactions"
     @click="() => handleDeleteReaction(reaction)">
     <img :src="iconSrc(reaction.reaction)" :alt="i.toString()" class="reaction-item">
-    <span>{{ reaction.author }}</span>
+    <AvatarAlias radius="15" :avatar="reaction.avatar" :alias-name="reaction.aliasName"
+      :alias-color="reaction.aliasColor" />
   </div>
 </template>
 
 <style scoped>
 .reactions {
   display: flex;
-  gap: 3px;
+  gap: 1px;
   align-items: center;
   cursor: pointer;
 }

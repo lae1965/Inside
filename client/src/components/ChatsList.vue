@@ -5,6 +5,7 @@ import type { AxiosError } from 'axios';
 
 import { useTopicsStore } from '@/stores/topicsStore';
 import { useUserStore } from '@/stores/userStore';
+import AvatarAlias from './AvatarAlias.vue';
 
 const newTopic = ref('');
 const router = useRouter();
@@ -39,7 +40,11 @@ onMounted(async () => {
 
 <template>
   <header>
-    <h2 class="header">Пользователь: <span class="header__name">{{ userStore.login }}</span></h2>
+    <h2 class="header">Пользователь:
+      <AvatarAlias radius="25" :avatar="userStore.avatar" :alias-name="userStore.alias.name"
+        :alias-color="userStore.alias.color" />
+      <span class="header__name">{{ userStore.login }}</span>
+    </h2>
   </header>
   <form class="new-themes" @submit.prevent="handleSubmit">
     <input type="text" name="new-themes" class="new-themes__input" placeholder="Новая тема" v-model="newTopic">
@@ -55,7 +60,10 @@ onMounted(async () => {
     <tbody>
       <tr @click="handleTopic(item.id, item.topic)" v-for="item in topicStore.topicList" :key="item.id">
         <td class="themes__message">{{ item.topic }}</td>
-        <td class="themes__author">{{ item.author }}</td>
+        <td class="themes__author">
+          <AvatarAlias radius="15" :avatar="item.avatar" :alias-name="item.aliasName" :alias-color="item.aliasColor" />
+          {{ item.author }}
+        </td>
       </tr>
     </tbody>
   </table>
@@ -64,9 +72,12 @@ onMounted(async () => {
 
 <style>
 .header {
-  text-align: center;
   margin-top: 40px;
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .header__name {
@@ -130,8 +141,9 @@ onMounted(async () => {
 }
 
 .themes__author {
-  width: 15%;
-  vertical-align: top;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
 }
 
 .no-content {

@@ -57,7 +57,7 @@ npm install
 npm run start
 
 # watch mode
-npm run start:dev
+npm run dev
 ```
 
 2. В каталоге "client" запустить команду:
