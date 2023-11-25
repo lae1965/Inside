@@ -7,12 +7,15 @@ import {
   Get,
   Req,
   UseGuards,
+  Param,
+  Patch,
 } from '@nestjs/common';
 import { Request } from 'express';
 
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 interface User extends Request {
   user: {
@@ -39,6 +42,11 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() createUserDto: CreateUserDto) {
     return await this.userService.login(createUserDto);
+  }
+
+  @Patch('update/:id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.update(+id, updateUserDto);
   }
 
   @Get('auth')

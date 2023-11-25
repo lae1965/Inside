@@ -38,7 +38,8 @@ const handleLoginChange = () => {
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <AvatarAlias radius="100" :avatar="user.avatar" :aliasName="user.alias.name" :alias-color="user.alias.color" />
+    <AvatarAlias radius="100" :avatar="user.avatar" :aliasName="user.alias.name" :alias-color="user.alias.color"
+      :enable-modify="true" />
     <input type="text" name="login" placeholder="Логин" v-model="login" @change="handleLoginChange">
     <input type="password" name="password" placeholder="Пароль" v-model="password">
     <input type="password" name="check-password" placeholder="Повторите пароль" v-model="checkPassword">

@@ -5,6 +5,7 @@ import { PrismaService } from 'nestjs-prisma';
 import * as jwt from 'jsonwebtoken';
 
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -83,6 +84,24 @@ export class UserService {
           aliasName: user.aliasName,
         }),
       };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.prisma.user.update({
+        where: { id },
+        data: updateUserDto,
+        select: {
+          aliasColor: true,
+          aliasName: true,
+          avatar: true,
+        },
+      });
+      console.log(user);
+      return user;
     } catch (e) {
       throw e;
     }

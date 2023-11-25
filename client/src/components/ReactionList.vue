@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Reaction } from '@/interfaces/messageInterface';
+import type { Reaction } from '@/interfaces/interfaces';
 import { useReactionsStore } from '@/stores/reactionsStore';
 import { useSocketStore } from '@/stores/socketStore';
 import { useUserStore } from '@/stores/userStore';

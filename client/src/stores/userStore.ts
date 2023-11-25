@@ -7,10 +7,9 @@ import { $api, $apiAuth } from '@/api'
 export const useUserStore = defineStore('user', () => {
   const login = ref('')
   const id = ref(-1)
-  const avatar = ref('')
+  const avatar = ref(null as string | null)
   const alias = reactive({
     name: '',
-    bgColor: '',
     color: ''
   })
 
@@ -95,6 +94,29 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const updateFetch = async (data: {
+    aliasName?: string
+    aliasColor?: string
+    avatar?: string
+  }) => {
+    try {
+      const formData = new FormData()
+      if (data.aliasName) formData.append('aliasName', data.aliasName)
+      if (data.aliasColor) formData.append('aliasColor', data.aliasColor)
+      if (data.avatar) formData.append('avatar', data.avatar)
+      const retcode = await $apiAuth.patch(
+        `${import.meta.env.VITE_SERVER_URL}/update/${id.value}`,
+        formData
+      )
+      if (!retcode) throw new Error('Ошибка обновления')
+      if (retcode.status !== 200)
+        throw new Error(`Ошибка обновления: статус ответа ${retcode.status}`)
+    } catch (error) {
+      console.log((error as Error).message)
+      throw error
+    }
+  }
+
   const isAuthFetch = async () => {
     try {
       const retcode = await $apiAuth.get(`${import.meta.env.VITE_SERVER_URL}/auth`)
@@ -121,6 +143,7 @@ export const useUserStore = defineStore('user', () => {
     setAliasName,
     setAliasColor,
     authFetch,
+    updateFetch,
     isAuthFetch
   }
 })

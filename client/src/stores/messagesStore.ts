@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 
 import { useTopicsStore } from './topicsStore'
 import { $apiAuth } from '@/api'
-import type { Message } from '@/interfaces/messageInterface'
+import type { Message } from '@/interfaces/interfaces'
 
 export const useMessagesStore = defineStore('message', () => {
   const messageList = reactive([] as Message[])

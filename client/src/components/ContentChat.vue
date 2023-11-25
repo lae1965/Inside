@@ -12,7 +12,7 @@ import { iconList } from '@/util/reactions';
 import ReactionSelectList from './ReactionSelectList.vue';
 import ReactionList from './ReactionList.vue';
 import AvatarAlias from './AvatarAlias.vue';
-import type { Message } from '@/interfaces/messageInterface';
+import type { Message } from '@/interfaces/interfaces';
 
 const isReactionClick = ref(false);
 const router = useRouter();

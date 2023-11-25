@@ -3,15 +3,7 @@ import { reactive, ref } from 'vue'
 
 import { useUserStore } from './userStore'
 import { $apiAuth } from '@/api'
-
-interface Topic {
-  id: number
-  topic: string
-  author: string
-  avatar: string
-  aliasName: string
-  aliasColor: string
-}
+import type { Topic } from '@/interfaces/interfaces'
 
 export const useTopicsStore = defineStore('topics', () => {
   const topicList = reactive([] as Topic[])
@@ -22,6 +14,10 @@ export const useTopicsStore = defineStore('topics', () => {
   const setCurTopic = (id: number, topic: string) => {
     curTopic.value = topic
     curTopicId.value = id
+  }
+
+  const changeOneTopic = (indexOfTopic: number, newTopic: Topic) => {
+    topicList.splice(indexOfTopic, 1, newTopic)
   }
 
   const fetchCreateTopic = async (newTopic: string) => {
@@ -58,5 +54,13 @@ export const useTopicsStore = defineStore('topics', () => {
     }
   }
 
-  return { topicList, curTopic, curTopicId, setCurTopic, fetchCreateTopic, fetchGetTopics }
+  return {
+    topicList,
+    curTopic,
+    curTopicId,
+    setCurTopic,
+    changeOneTopic,
+    fetchCreateTopic,
+    fetchGetTopics
+  }
 })

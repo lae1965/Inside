@@ -6,6 +6,7 @@ import type { AxiosError } from 'axios';
 import { useTopicsStore } from '@/stores/topicsStore';
 import { useUserStore } from '@/stores/userStore';
 import AvatarAlias from './AvatarAlias.vue';
+import type { Topic } from '@/interfaces/interfaces';
 
 const newTopic = ref('');
 const router = useRouter();
@@ -36,13 +37,29 @@ onMounted(async () => {
     else alert('Ошибка загрузки');
   }
 });
+
+const handleChangeAvatar = () => {
+
+  topicStore.topicList.forEach((topic: Topic, i) => {
+    if (topic.author === userStore.login) {
+      const newTopic: Topic = { ...topic };
+      if (userStore.avatar) newTopic.avatar = userStore.avatar;
+      else {
+        newTopic.avatar = null;
+        newTopic.aliasName = userStore.alias.name;
+        newTopic.aliasColor = userStore.alias.color;
+      }
+      topicStore.changeOneTopic(i, newTopic);
+    }
+  });
+}
 </script>
 
 <template>
   <header>
     <h2 class="header">Пользователь:
       <AvatarAlias radius="25" :avatar="userStore.avatar" :alias-name="userStore.alias.name"
-        :alias-color="userStore.alias.color" />
+        :alias-color="userStore.alias.color" :enable-modify="true" @change-avatar-alias="handleChangeAvatar" />
       <span class="header__name">{{ userStore.login }}</span>
     </h2>
   </header>

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import type { Message, Reaction } from '@/interfaces/messageInterface'
+import type { Message, Reaction } from '@/interfaces/interfaces'
 
 export const useReactionsStore = defineStore('reaction', () => {
   const createReaction = (message: Message, newReaction: Reaction) => {
